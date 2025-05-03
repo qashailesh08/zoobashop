@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Zoobashop Automation">
+  <test name="Zoobashop Sign Up Scenario">
+    <classes>
+      <class name="com.zoob.login.module.zoobSignUpScenario"/>
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- Suite -->
