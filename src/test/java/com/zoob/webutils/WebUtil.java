@@ -109,7 +109,7 @@ public class WebUtil {
 		}
 		DateFormat dfObj = new SimpleDateFormat("dd-MM-yyyy hh.mm.ss a");
 		String timeStamp = dfObj.format(new Date());
-		ExtentSparkReporter sparkReport = new ExtentSparkReporter("Reports\\" + "VtigerCRM.html" + "," + timeStamp);
+		ExtentSparkReporter sparkReport = new ExtentSparkReporter("Reports\\" + "ZoobShop.html" + "," + timeStamp);
 		exReportObj.attachReporter(sparkReport);
 
 	}
@@ -212,26 +212,57 @@ public class WebUtil {
 	 * 
 	 */
 	public String getSnapShote(String elementName) {
+//		DateFormat df = new SimpleDateFormat("dd-MM-yyyy hh_mm_ss a");
+//		String timestamp = df.format(new Date());
+//		TakesScreenshot ss = (TakesScreenshot) driver;
+//		File sourceOfImage = ss.getScreenshotAs(OutputType.FILE);
+//		File folder = new File("snapShotes");
+//		if (!folder.exists()) {
+//			System.out.println(folder.mkdir());
+//			getExtentTest().log(Status.INFO, "Directory created succesfully");
+//		}
+//		File destfolderObj = new File("snapShotes\\" + elementName + "" + timestamp + ".png");
+//		// png , jpg, jpeg , bmp, gifs
+//		try {
+//			Files.copy(sourceOfImage, destfolderObj);
+//			getExtentTest().log(Status.INFO, "ScreenShote took succesfully of: " + elementName);
+//		} catch (IOException e) {
+//			getExtentTest().log(Status.FAIL, "Did not take screenshot ");
+//			e.printStackTrace();
+//		}
+//		String myPath = destfolderObj.getAbsolutePath();
+//		return myPath;
 		DateFormat df = new SimpleDateFormat("dd-MM-yyyy hh_mm_ss a");
 		String timestamp = df.format(new Date());
 		TakesScreenshot ss = (TakesScreenshot) driver;
 		File sourceOfImage = ss.getScreenshotAs(OutputType.FILE);
+
+		// Create folder if it doesn't exist
 		File folder = new File("snapShotes");
 		if (!folder.exists()) {
-			System.out.println(folder.mkdir());
-			getExtentTest().log(Status.INFO, "Directory created succesfully");
+			folder.mkdir();
+			getExtentTest().log(Status.INFO, "Directory created successfully");
 		}
-		File destfolderObj = new File("snapShotes\\" + elementName + "" + timestamp + ".png");
-		// png , jpg, jpeg , bmp, gifs
+
+		// Sanitize and shorten elementName
+		String safeElementName = driver.getTitle().replaceAll("[^a-zA-Z0-9-_\\.]", "_");
+		if (safeElementName.length() > 50) {
+			safeElementName = safeElementName.substring(0, 50);
+		}
+
+		File destfolderObj = new File("snapShotes" + File.separator + safeElementName + "_" + timestamp + ".png");
+
 		try {
 			Files.copy(sourceOfImage, destfolderObj);
-			getExtentTest().log(Status.INFO, "ScreenShote took succesfully of: " + elementName);
+			getExtentTest().log(Status.INFO, "Screenshot taken successfully of: " + safeElementName);
 		} catch (IOException e) {
-			getExtentTest().log(Status.FAIL, "Did not take screenshot ");
+			getExtentTest().log(Status.FAIL, "Did not take screenshot");
 			e.printStackTrace();
 		}
+
 		String myPath = destfolderObj.getAbsolutePath();
 		return myPath;
+
 	}
 	/*
 	 * Dimension class methods
@@ -803,15 +834,23 @@ public class WebUtil {
 	 * 
 	 * @return: String
 	 */
-	public String getPageSource() {
+	public String getPageSource(String actualText) {
 		String pageSource = null;
 		try {
 			pageSource = driver.getPageSource();
-			getExtentTest().log(Status.INFO, "Page source found succesfully");
+			if (pageSource.contains(actualText)) {
+				getExtentTest().log(Status.PASS, "Page source contains text- " + actualText);
+			} else {
+				getExtentTest().log(Status.FAIL, "Page source not contains text- " + actualText);
+				getSnapShote(pageSource);
+			}
+
 		} catch (IllegalArgumentException e) {
 			getExtentTest().log(Status.WARNING, "Please set driver");
+			getSnapShote(pageSource);
 		} catch (Exception e) {
 			getExtentTest().log(Status.FAIL, "Did not Find page source");
+			getSnapShote(pageSource);
 			throw e;
 		}
 		return pageSource;
@@ -833,6 +872,7 @@ public class WebUtil {
 			getExtentTest().log(Status.INFO, "Window hanlde value found succesfully");
 		} catch (IllegalArgumentException e) {
 			getExtentTest().log(Status.WARNING, "Please set driver");
+
 			throw e;
 		} catch (NoSuchWindowException e) {
 			window = driver.getWindowHandle();
