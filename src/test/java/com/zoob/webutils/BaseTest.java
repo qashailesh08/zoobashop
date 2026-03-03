@@ -36,14 +36,15 @@ public class BaseTest {
 		util.launchBrowser("chromebrowser");
 		util.maxWindow();
 		util.getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
-		util.openUrl("https://www.businessghana.com/myaccount/profile/login?redirect=%2Fprofile%2Findex");
+		util.openUrl("https://www.businessghana.com/");
+		util.getTitle("BusinessGhana");
 
 	}
 
 	@AfterMethod
 	public void afterMethod() {
 		System.out.println("I am After Method");
-		util.quit(2000);
+//		util.quit(2000);
 	}
 
 	@AfterClass

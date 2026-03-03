@@ -92,6 +92,30 @@ public class WebUtil {
 	}
 
 	/*
+	 * # This method is used to find the current window title.
+	 * 
+	 * @param : String expetecTitle
+	 * 
+	 * @return : no return type
+	 */
+	public void getTitle(String expetecTitle) {
+		String actualTitle = driver.getTitle();
+		try {
+			if (actualTitle.equals(expetecTitle)) {
+				getExtentTest().log(Status.PASS,
+						"Actual Title -" + actualTitle + "- Matched With -" + "Expected Title -" + expetecTitle);
+			} else {
+				addcapture("Widnow Title");
+				getExtentTest().log(Status.FAIL,
+						"Actual Title -" + actualTitle + "- Not Matched With -" + "Expected Title -" + expetecTitle);
+			}
+		} catch (Exception e) {
+			getExtentTest().log(Status.FAIL, "Unable to find the Title ");
+			throw e;
+		}
+	}
+
+	/*
 	 * By this method we can implements Scenario name and we can also create a new
 	 * file , where all test case will be reported.
 	 * 
@@ -109,7 +133,7 @@ public class WebUtil {
 		}
 		DateFormat dfObj = new SimpleDateFormat("dd-MM-yyyy hh.mm.ss a");
 		String timeStamp = dfObj.format(new Date());
-		ExtentSparkReporter sparkReport = new ExtentSparkReporter("Reports\\" + "ZoobShop.html" + "," + timeStamp);
+		ExtentSparkReporter sparkReport = new ExtentSparkReporter("Reports\\" + "ZoobaShop.html" + "," + timeStamp);
 		exReportObj.attachReporter(sparkReport);
 
 	}
@@ -300,14 +324,15 @@ public class WebUtil {
 	 * @ return: no return
 	 *
 	 */
-	public void stringValidation(String actulaValue, String excpectedValue, String elementName) {
-		if (actulaValue.equals(excpectedValue)) {
-			getExtentTest().log(Status.PASS,
-					"actulaValue: '" + actulaValue + "' matched with excpectedValue: " + excpectedValue);
+	public void stringValidation(WebElement actulaValue, String excpectedValue, String elementName) {
+		String strActualValue = actulaValue.getAttribute("value");
+		if (strActualValue.equals(excpectedValue)) {
+			getExtentTest().log(Status.PASS, "Actual Value: '" + strActualValue + "' matched with excpectedValue: "
+					+ excpectedValue + " - Element -" + elementName);
 		} else {
 			addcapture(elementName);
-			getExtentTest().log(Status.FAIL,
-					"actulaValue: '" + actulaValue + "' not matched with excpectedValue: '" + excpectedValue);
+			getExtentTest().log(Status.FAIL, "Actual Value: '" + strActualValue + "' not matched with excpectedValue: '"
+					+ excpectedValue + " - Element -" + elementName);
 		}
 	}
 
